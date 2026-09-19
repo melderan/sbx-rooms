@@ -1,0 +1,12 @@
+schemaVersion: "1"
+name: opus
+mind:
+  agent: claude
+  model: claude-opus-5
+room: ~/rooms/opus
+peers:
+  - sonnet
+commons:
+  - path: ~/rooms/_commons
+network:
+  allow: [api.anthropic.com]

@@ -1,0 +1,22 @@
+# One friend. The reconciler turns this into examples/generated/<name>/sbxenv.yaml
+# plus a room mixin kit, and keeps the running sandbox converged to it.
+schemaVersion: "1"
+name: sonnet            # the friend's own name; a placeholder until they pick one
+mind:
+  agent: claude         # a built-in sbx agent or a sandbox kit reference
+  model: claude-sonnet-5   # pinned; written to <room>/mind.lock at birth, checked at every start
+room: ~/rooms/sonnet    # host directory, read-write, mounted into THIS sandbox only
+peers:                  # who this friend may write letters to (must be mutual to deliver)
+  - opus
+  - haiku
+commons:                # shared, read-only by default; a read-write commons is a multi-writer hazard
+  - path: ~/rooms/_commons
+workspaces:             # ordinary sbx workspaces, passed through untouched
+  - path: ~/src/project
+kits:                   # ordinary sbx mixins, passed through untouched
+  - ./kits/github-tools
+network:
+  allow: [api.anthropic.com, github.com, api.github.com]
+resources:
+  memory: 8g
+  cpus: 4

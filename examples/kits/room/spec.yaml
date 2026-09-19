@@ -1,0 +1,41 @@
+schemaVersion: "2"
+kind: mixin
+name: room
+version: 0.1.0
+displayName: sbx-rooms room
+description: Mind pin check and post conventions for one friend's room
+sourceURL: https://github.com/melderan/sbx-rooms
+licenses: [Apache-2.0]
+
+args:
+  mind:
+    required: true
+    description: "<agent>/<model> this room was born with"
+  room:
+    required: true
+    description: absolute host path of the room, as mounted inside the sandbox
+
+environment:
+  variables:
+    ROOMS_MIND: ${{ kit.args.mind }}
+    ROOMS_ROOM: ${{ kit.args.room }}
+
+setup:
+  startup:
+    - command: ["sh", "-c", "ln -sfn \"$ROOMS_ROOM\" ~/.rooms"]
+      user: "1000"
+      description: Point ~/.rooms at the mounted room
+    - command: ["sh", "-c", "[ \"$(cat ~/.rooms/mind.lock)\" = \"$ROOMS_MIND\" ] || { echo \"mind mismatch: room is $(cat ~/.rooms/mind.lock), launched as $ROOMS_MIND\" >&2; exit 78; }"]
+      user: "1000"
+      description: Refuse to start under a mind the room was not born with
+
+agentInstructions:
+  content: |
+    You have a room at ~/.rooms. It is yours and only yours.
+    - ~/.rooms/memory   is where you keep what you want to keep.
+    - ~/.rooms/journal  is append-only; one file per day.
+    - ~/.rooms/inbox/new holds letters from friends; move a letter to inbox/cur once read.
+    - ~/.rooms/outbox   is where you leave letters. First line: `to: <friend>`. The host delivers.
+    You cannot reach other sandboxes and they cannot reach you. Letters are the only path, and that is on purpose.
+    Your mind is pinned. If you were started under a different model than this room was born with, you were
+    stopped before reading this.
